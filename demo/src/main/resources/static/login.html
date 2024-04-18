@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+<style>
+    body{margin: 0; font-family: "Arial Black"}
+
+    .container{
+        font-family: "Arial";
+    }
+</style>
+</head>
+<body>
+<div className="container">
+    <h1>Login</h1>
+    <form action="/login" method="post">
+        <label for="email">Email: </label><br>
+        <input type="text" name="email"><br>
+        <label for="password">Senha: </label><br>
+        <input type="password" name="senha"><br>
+        <input type="radio" id="cliente" name="tipo" value="cliente" checked>
+        <label for="lojista">Cliente</label>
+        <input type="radio" id="lojista" name="tipo" value="lojista">Lojista<br>
+        <button type="submit" value="login">Entrar</button>
+
+    </form>
+</div>
+</body>
+
+</html>
