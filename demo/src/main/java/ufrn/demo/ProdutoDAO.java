@@ -1,7 +1,6 @@
 package ufrn.demo;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.net.URISyntaxException;
 import java.sql.Connection;
@@ -39,7 +38,7 @@ public class ProdutoDAO {
                 String descricao = rs.getString("descricao");
                 int estoque = rs.getInt("estoque");
 
-                // Cria um objeto Produto e adiciona à lista
+                // cria um objeto Produto e adiciona à lista
                 Produto produto = new Produto(id, preco, nome, descricao, estoque);
                 produtos.add(produto);
             }
@@ -50,19 +49,17 @@ public class ProdutoDAO {
     }
 
     // método para adicionar um produto ao banco de dados
-    @PostMapping("/cadastrar-produto")
     public void adicionarProdutoNoBanco(Produto produto) throws URISyntaxException {
-        String sql = "INSERT INTO produtos (id, preco, nome, descricao, estoque) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO produtos (preco, nome, descricao, estoque) VALUES (?, ?, ?, ?)";
 
         // conexão com o banco de dados
         try (Connection conexao = getConnection();
              PreparedStatement stmt = conexao.prepareStatement(sql)) {
 
-            stmt.setInt(1, produto.getId());
-            stmt.setInt(2, produto.getPreco());
-            stmt.setString(3, produto.getNome());
-            stmt.setString(4, produto.getDescricao());
-            stmt.setInt(5, produto.getEstoque());
+            stmt.setInt(1, produto.getPreco());
+            stmt.setString(2, produto.getNome());
+            stmt.setString(3, produto.getDescricao());
+            stmt.setInt(4, produto.getEstoque());
 
             // cxecuta a inserção
             stmt.executeUpdate();
@@ -73,8 +70,8 @@ public class ProdutoDAO {
 
     public Produto getProdutoById(int idProduto) {
         String sql = "SELECT * FROM produtos WHERE id = ?";
-        try {
-            PreparedStatement ps = conexao.prepareStatement(sql);
+        try (Connection conexao = getConnection();
+             PreparedStatement ps = conexao.prepareStatement(sql)) {
             ps.setInt(1, idProduto);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -91,14 +88,17 @@ public class ProdutoDAO {
         return null;
     }
 
-    public void decrementaEstoque(int idProduto, int estoque) throws SQLException {
-        Connection conexao = null;
-        PreparedStatement stmt = null;
-        conexao = getConnection();
-        String query = "UPDATE produtos SET estoque = estoque - ? WHERE id = ?";
-        stmt = conexao.prepareStatement(query);
-        stmt.setInt(1, estoque);
-        stmt.setInt(2, idProduto);
-        stmt.executeUpdate();
+    public void decrementaEstoque(int idProduto, int quantidade) throws SQLException {
+        String sql = "UPDATE produtos SET estoque = estoque - ? WHERE id = ?";
+        try (Connection conexao = getConnection();
+             PreparedStatement stmt = conexao.prepareStatement(sql)) {
+            stmt.setInt(1, quantidade);
+            stmt.setInt(2, idProduto);
+
+            // executa a atualização do estoque
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

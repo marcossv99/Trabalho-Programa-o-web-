@@ -1,0 +1,9 @@
+body{
+    font-family: "Arial Black";
+    margin: 0;
+}
+.container{
+    display: flex;
+    position: relative;
+    align-content: center;
+}
